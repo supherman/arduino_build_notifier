@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'arduino_build_notifier'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2012-11-08'
   s.summary     = "An Integration server notifier"
   s.description = "like ccmenu but with Arduino"
