@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    arduino_build_notifier (0.0.1)
+    arduino_build_notifier (0.0.2)
       celluloid
       dino
       gli
