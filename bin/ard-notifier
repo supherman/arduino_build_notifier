@@ -52,8 +52,13 @@ rescue OptionParser::InvalidOption, OptionParser::MissingArgument
   exit
 end
 
+board = Dino::Board.new Dino::TxRx.new
 build = ArduinoBuildNotifier::CruiseControlBuild.new options[:server], options[:project], { username: options[:user], password: options[:pass] }
-arduino = ArduinoBuildNotifier::ArduinoBoard.new
+success = ArduinoBuildNotifier::Arduino::Indicators::Success.new board, 13
+failure = ArduinoBuildNotifier::Arduino::Indicators::Failure.new board, 12
+building = ArduinoBuildNotifier::Arduino::Indicators::Building.new board, 11
+error = ArduinoBuildNotifier::Arduino::Indicators::Error.new board, 10
+arduino = ArduinoBuildNotifier::Arduino::Board.new success, failure, building, error
 notifier = ArduinoBuildNotifier::Notifier.new build, arduino, options[:time]
 notifier.start_notifications
 sleep
