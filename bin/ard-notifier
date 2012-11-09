@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require
+require 'optparse'
+
+options = {}
+options[:time] = 10
+
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: ard-notifier --server 'http://...' --project foo --user foo --password bar"
+
+  opts.on '-s SERVER', '--server SERVER', 'CI server URL' do |url|
+    options[:server] = url
+  end
+
+  opts.on '-j PROJECT', '--project PROJECT', 'Project name' do |project|
+    options[:project] = project
+  end
+
+  opts.on '-u USER', '--user USER', 'CI server username' do |user|
+    options[:user] = user
+  end
+
+  opts.on '-p PASS', '--password PASS', 'CI server password' do |pass|
+    options[:pass] = pass
+  end
+
+  opts.on '-t [TIME]', '--time [TIME]', 'Request frequency (secs)' do |time|
+    options[:time] = time
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+end
+
+begin
+  optparse.parse!
+  mandatory = [:server, :project, :user, :pass]
+  missing = mandatory.select{ |param| options[param].nil? }
+  if not missing.empty?
+    puts "Missing options: #{missing.join(', ')}"
+    puts optparse
+    exit
+  end
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument
+  puts $!.to_s
+  puts optparse
+  exit
+end
+
+build = ArduinoBuildNotifier::CruiseControlBuild.new options[:server], options[:project], { username: options[:user], password: options[:pass] }
+arduino = ArduinoBuildNotifier::ArduinoBoard.new
+notifier = ArduinoBuildNotifier::Notifier.new build, arduino, options[:time]
+notifier.start_notifications
+sleep
+
