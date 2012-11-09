@@ -2,6 +2,9 @@
 
 A Continuous Integration Server Monitor made it over an Arduino board
 
+# Warning
+At this moment this only works with Cruise Control servers
+
 # Installation
 
 1. Install the ruby gem
